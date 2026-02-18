@@ -1,0 +1,67 @@
+<h2 mat-dialog-title>{{ dialogTitle }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" class="transaction-form">
+    <mat-form-field class="full-width">
+      <mat-label>Tytul</mat-label>
+      <input matInput formControlName="title" />
+      @if (form.controls.title.hasError('required') && form.controls.title.touched) {
+        <mat-error>Tytul jest wymagany</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="half-width">
+      <mat-label>Kwota</mat-label>
+      <input matInput type="number" formControlName="amount" />
+      @if (form.controls.amount.hasError('required') && form.controls.amount.touched) {
+        <mat-error>Kwota jest wymagana</mat-error>
+      }
+      @if (form.controls.amount.hasError('min') && form.controls.amount.touched) {
+        <mat-error>Kwota musi byc wieksza od 0</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="half-width">
+      <mat-label>Typ</mat-label>
+      <mat-select formControlName="type">
+        @for (t of transactionTypes; track t.value) {
+          <mat-option [value]="t.value">{{ t.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="half-width">
+      <mat-label>Kategoria</mat-label>
+      <mat-select formControlName="category">
+        @for (cat of categories; track cat) {
+          <mat-option [value]="cat">{{ cat }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.category.hasError('required') && form.controls.category.touched) {
+        <mat-error>Kategoria jest wymagana</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="half-width">
+      <mat-label>Data</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+      @if (form.controls.date.hasError('required') && form.controls.date.touched) {
+        <mat-error>Data jest wymagana</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Opis (opcjonalnie)</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button mat-stroked-button mat-dialog-close>Anuluj</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid">
+    Zapisz
+  </button>
+</mat-dialog-actions>

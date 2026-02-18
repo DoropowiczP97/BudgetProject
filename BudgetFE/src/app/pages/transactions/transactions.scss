@@ -1,0 +1,392 @@
+:host {
+  display: block;
+}
+
+.transactions-header {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  > button {
+    margin-left: 0;
+  }
+}
+
+.search-field {
+  width: 400px;
+  min-width: 400px;
+  flex: 0 1 400px;
+}
+
+:host ::ng-deep .search-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+:host ::ng-deep .search-field .mat-mdc-form-field-bottom-align::before {
+  content: none !important;
+}
+
+.search-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px !important;
+  height: 32px !important;
+  margin-right: 6px;
+  margin-top: 4px;
+  padding: 0 !important;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-secondary);
+
+  mat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    line-height: 32px;
+  }
+}
+
+.search-clear-btn:hover {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+:host ::ng-deep .search-clear-btn .mat-mdc-button-persistent-ripple::before {
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+:host ::ng-deep .search-clear-btn .mat-mdc-button-ripple,
+:host ::ng-deep .search-clear-btn .mat-mdc-focus-indicator,
+:host ::ng-deep .search-clear-btn .mat-ripple-element {
+  display: none !important;
+}
+
+.add-transaction-btn {
+  width: 320px;
+  min-width: 320px;
+  height: 56px;
+  border-radius: 12px !important;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-panel {
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background-color: var(--surface-1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.table-container {
+  overflow-x: auto;
+  background-color: var(--surface-1);
+  border: 0;
+  border-radius: 0;
+  min-height: 0;
+  flex: 1;
+  position: relative;
+}
+
+.table-container.empty {
+  display: flex;
+  flex-direction: column;
+}
+
+.transactions-paginator {
+  border-top: 1px solid var(--border-color);
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  background-color: var(--surface-2);
+}
+
+.mobile-paginator {
+  display: none;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.mat-column-date {
+  width: 120px;
+}
+
+.mat-column-title {
+  width: 30%;
+}
+
+.mat-column-category {
+  width: 20%;
+}
+
+.mat-column-type {
+  width: 120px;
+}
+
+.mat-column-amount {
+  width: 160px;
+}
+
+.mat-column-actions {
+  width: 120px;
+}
+
+.action-btn {
+  color: var(--text-secondary);
+}
+
+.action-btn:hover {
+  color: var(--text-primary);
+  background: rgba(140, 194, 255, 0.16);
+}
+
+.action-btn.delete-btn {
+  color: #742b37 !important;
+}
+
+.action-btn.delete-btn:hover {
+  color: #742b37 !important;
+  background: rgba(116, 43, 55, 0.14);
+}
+
+.type-income {
+  color: #72d996;
+  font-weight: 500;
+}
+
+.type-expense {
+  color: #ff8880;
+  font-weight: 500;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaction-card {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-color);
+
+  .card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+
+  .card-label {
+    color: var(--text-secondary);
+  }
+
+  .card-amount {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+}
+
+.no-data {
+  text-align: center;
+  margin: auto 0;
+  padding: 24px 16px;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+:host-context(body.theme-light) .add-transaction-btn {
+  background: linear-gradient(120deg, #5d8fc9, #4f82bd) !important;
+  color: #f6fbff !important;
+  border: 1px solid rgba(63, 104, 147, 0.35) !important;
+}
+
+:host-context(body.theme-light) .search-clear-btn {
+  color: #000;
+}
+
+:host-context(body.theme-light) .search-clear-btn:hover {
+  color: #000;
+  background: transparent;
+}
+
+:host-context(body.theme-light) ::ng-deep .search-field .mdc-floating-label,
+:host-context(body.theme-light) ::ng-deep .search-field .mat-mdc-input-element,
+:host-context(body.theme-light) ::ng-deep .search-field .mat-mdc-form-field-icon-prefix,
+:host-context(body.theme-light) ::ng-deep .search-field .mat-mdc-form-field-icon-suffix {
+  color: #000 !important;
+}
+
+:host-context(body.theme-light) ::ng-deep .search-field .mdc-notched-outline__leading,
+:host-context(body.theme-light) ::ng-deep .search-field .mdc-notched-outline__notch,
+:host-context(body.theme-light) ::ng-deep .search-field .mdc-notched-outline__trailing {
+  border-color: rgba(57, 87, 115, 0.45) !important;
+}
+
+:host-context(body.theme-light) .add-transaction-btn:hover {
+  filter: brightness(1.06);
+}
+
+:host-context(body.theme-light) .action-btn {
+  color: #395773;
+}
+
+:host-context(body.theme-light) .action-btn:hover {
+  color: #1d334a;
+  background: rgba(88, 133, 180, 0.18);
+}
+
+:host-context(body.theme-light) .action-btn.delete-btn {
+  color: #742b37;
+}
+
+:host-context(body.theme-light) .action-btn.delete-btn:hover {
+  color: #742b37;
+  background: rgba(116, 43, 55, 0.14);
+}
+
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-container,
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-content,
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-arrow {
+  color: #000 !important;
+}
+
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-stem,
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-indicator,
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-pointer-left,
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-pointer-right,
+:host-context(body.theme-light) ::ng-deep .mat-sort-header-pointer-middle {
+  border-color: #000 !important;
+}
+
+@media (max-width: 1024px) {
+  table {
+    th,
+    td {
+      padding: 8px 4px !important;
+    }
+  }
+
+  .table-container {
+    min-height: 520px;
+    flex: initial;
+  }
+
+  .table-panel {
+    min-height: 0;
+    height: auto;
+  }
+
+  .mat-column-title,
+  .mat-column-category {
+    width: auto;
+  }
+
+  .transactions-paginator {
+    display: none;
+  }
+
+  .mobile-paginator {
+    display: block;
+    margin-top: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: var(--surface-2);
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-container {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    padding: 10px 12px;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-page-size {
+    margin-right: 0;
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-page-size-label {
+    margin: 0 8px 0 0;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-range-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-range-label {
+    margin: 0 8px 0 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .transactions-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: stretch;
+  }
+
+  .search-field {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .add-transaction-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 0 10px;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-container {
+    padding: 8px 10px;
+    row-gap: 8px;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-page-size {
+    align-items: center;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-page-size-label,
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-range-label {
+    font-size: 12px;
+  }
+
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-navigation-first,
+  :host ::ng-deep .mobile-paginator .mat-mdc-paginator-navigation-last {
+    display: none;
+  }
+}
+
+@media (min-width: 1025px) {
+  :host {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100dvh - 140px);
+  }
+
+  .table-panel {
+    flex: 1;
+  }
+}
+

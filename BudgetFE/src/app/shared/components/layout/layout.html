@@ -1,0 +1,47 @@
+<div class="layout-container">
+  <mat-toolbar class="layout-toolbar">
+    <nav class="top-nav">
+      @for (item of navItems; track item.route) {
+        <a class="nav-chip" [routerLink]="item.route" routerLinkActive="active-link">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="toolbar-actions">
+      <button type="button" class="theme-toggle" (click)="toggleTheme()">
+        <mat-icon>{{ currentTheme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span>{{ currentTheme() === 'dark' ? 'Jasny styl' : 'Ciemny styl' }}</span>
+      </button>
+
+      <div class="account-menu" tabindex="0">
+        <button type="button" class="account-trigger">
+          <mat-icon>account_circle</mat-icon>
+          <span class="account-email">{{ userEmail }}</span>
+          <mat-icon class="expand-icon">expand_more</mat-icon>
+        </button>
+
+        <div class="account-dropdown">
+          <button type="button" class="dropdown-item" (click)="changePassword()">
+            <mat-icon>manage_accounts</mat-icon>
+            Zmień hasło
+          </button>
+          <button type="button" class="dropdown-item danger" (click)="deleteAccount()">
+            <mat-icon>delete_forever</mat-icon>
+            Usun konto
+          </button>
+        </div>
+      </div>
+
+      <button mat-flat-button class="logout-button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Wyloguj</span>
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <main class="page-content">
+    <router-outlet />
+  </main>
+</div>

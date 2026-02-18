@@ -1,0 +1,102 @@
+.transaction-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 14px;
+  width: 100%;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.half-width {
+  width: 100%;
+}
+
+:host {
+  color: var(--text-primary);
+}
+
+.dialog-content {
+  padding-top: 8px !important;
+  overflow-x: hidden;
+}
+
+.dialog-actions {
+  padding: 10px 24px 20px !important;
+  gap: 10px;
+}
+
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-floating-label,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-mdc-select-value-text,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-mdc-select-arrow,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-mdc-input-element,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-datepicker-toggle-default-icon,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-mdc-form-field-icon-suffix {
+  color: #000 !important;
+}
+
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-mdc-text-field-wrapper,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-text-field--outlined {
+  background: #fff !important;
+}
+
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-notched-outline__leading,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-notched-outline__notch,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-notched-outline__trailing {
+  border-color: #000 !important;
+  border-width: 1px !important;
+}
+
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-text-field--focused .mdc-notched-outline__leading,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-text-field--focused .mdc-notched-outline__notch,
+:host-context(body.theme-light) ::ng-deep .transaction-form .mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: #000 !important;
+  border-width: 1px !important;
+}
+
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-mdc-form-field-focus-overlay {
+  background: transparent !important;
+}
+
+:host-context(body.theme-light) ::ng-deep .transaction-form .mat-mdc-form-field-error {
+  color: #9d2d29 !important;
+}
+
+:host-context(body.theme-light) .dialog-actions button[mat-stroked-button] {
+  color: #1d334a !important;
+  border-color: rgba(63, 104, 147, 0.35) !important;
+}
+
+:host-context(body.theme-light) .dialog-actions button[mat-flat-button] {
+  background: linear-gradient(120deg, #5d8fc9, #4f82bd) !important;
+  color: #f6fbff !important;
+}
+
+:host-context(body.theme-light) .dialog-actions button[mat-flat-button][disabled] {
+  background: rgba(120, 149, 180, 0.45) !important;
+  color: rgba(246, 251, 255, 0.82) !important;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .transaction-form {
+    grid-template-columns: 1fr;
+    min-width: unset;
+  }
+
+  .full-width,
+  .half-width {
+    grid-column: 1;
+  }
+}

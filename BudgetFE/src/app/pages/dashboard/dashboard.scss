@@ -1,0 +1,308 @@
+:host {
+  display: block;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.date-filter {
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(34, 50, 69, 0.7), rgba(25, 38, 55, 0.7));
+}
+
+:host-context(body.theme-light) .date-filter {
+  border-color: rgba(84, 117, 154, 0.26);
+  background: linear-gradient(180deg, rgba(238, 245, 253, 0.95), rgba(230, 240, 251, 0.95));
+}
+
+:host-context(body.theme-light) ::ng-deep .date-filter .mdc-floating-label,
+:host-context(body.theme-light) ::ng-deep .date-filter .mat-mdc-input-element,
+:host-context(body.theme-light) ::ng-deep .date-filter .mat-datepicker-toggle-default-icon,
+:host-context(body.theme-light) .clear-filter-btn,
+:host-context(body.theme-light) ::ng-deep .date-filter .mat-mdc-form-field-icon-suffix {
+  color: #000 !important;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 160px);
+}
+
+.date-range-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 320px));
+  gap: 16px;
+}
+
+.filter-field {
+  width: 100%;
+  max-width: 320px;
+}
+
+:host ::ng-deep .date-filter .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+:host ::ng-deep .date-filter .mat-mdc-form-field-bottom-align::before {
+  content: none !important;
+}
+
+.clear-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: 2px;
+  width: 32px;
+  height: 32px;
+  margin-right: 6px;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-secondary);
+
+  mat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    line-height: 32px;
+  }
+}
+
+.clear-filter-btn:hover {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+:host ::ng-deep .calendar-toggle-btn .mat-mdc-icon-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin-right: 12px;
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+:host ::ng-deep .calendar-toggle-btn .mat-datepicker-toggle-default-icon {
+  width: 28px;
+  height: 28px;
+}
+
+:host ::ng-deep .calendar-toggle-btn .mat-mdc-icon-button:hover {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+:host ::ng-deep .calendar-toggle-btn .mat-mdc-icon-button:focus,
+:host ::ng-deep .calendar-toggle-btn .mat-mdc-icon-button:active {
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+:host ::ng-deep .calendar-toggle-btn .mat-mdc-button-persistent-ripple::before {
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+:host ::ng-deep .calendar-toggle-btn .mat-mdc-button-ripple,
+:host ::ng-deep .calendar-toggle-btn .mat-mdc-focus-indicator,
+:host ::ng-deep .calendar-toggle-btn .mat-ripple-element {
+  display: none !important;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-color);
+
+  mat-card-header {
+    align-items: center;
+  }
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    margin: 0;
+  }
+
+  .amount {
+    font-size: 1.8rem;
+    font-weight: 600;
+    display: block;
+    margin-top: 8px;
+  }
+}
+
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.income-icon {
+  background-color: #4caf50;
+}
+
+.income-amount {
+  color: #72d996;
+}
+
+.expense-icon {
+  background-color: #f44336;
+}
+
+.expense-amount {
+  color: #ff8880;
+}
+
+.balance-icon {
+  background-color: #1976d2;
+}
+
+.balance-amount {
+  color: #8cc2ff;
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  min-height: 0;
+  flex: 1;
+}
+
+.chart-card {
+  min-height: 0;
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-content {
+  flex: 1;
+  min-height: 220px;
+  height: auto;
+  overflow: hidden;
+}
+
+.chart-content ngx-charts-bar-vertical-2d,
+.chart-content ngx-charts-pie-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+:host ::ng-deep .chart-content .ngx-charts,
+:host ::ng-deep .chart-content .ngx-charts-outer,
+:host ::ng-deep .chart-content .chart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+:host ::ng-deep .ngx-charts .tick text,
+:host ::ng-deep .ngx-charts text,
+:host ::ng-deep .ngx-charts .legend-label-text,
+:host ::ng-deep .ngx-charts .label,
+:host ::ng-deep .ngx-charts .data-label {
+  fill: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+:host ::ng-deep .ngx-charts .gridline-path {
+  stroke: rgba(231, 238, 248, 0.18) !important;
+}
+
+:host ::ng-deep .ngx-charts .legend-label:hover .legend-label-text,
+:host ::ng-deep .ngx-charts .legend-label.active .legend-label-text,
+:host ::ng-deep .ngx-charts .legend-label-text:hover {
+  fill: #f4f7ff !important;
+  color: #f4f7ff !important;
+}
+
+.no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+// Tablet
+@media (max-width: 1024px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+
+  .chart-card {
+    min-height: 0;
+  }
+
+  .chart-content {
+    min-height: 300px;
+    height: 300px;
+  }
+}
+
+// Telefon
+@media (max-width: 768px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .summary-card .amount {
+    font-size: 1.4rem;
+  }
+
+  .date-range-form {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-field {
+    max-width: none;
+  }
+
+  .chart-card {
+    min-height: 0;
+  }
+
+  .chart-content {
+    min-height: 260px;
+    height: 260px;
+  }
+}

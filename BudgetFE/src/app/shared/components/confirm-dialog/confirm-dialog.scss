@@ -1,0 +1,16 @@
+:host {
+  color: var(--text-primary);
+}
+
+.danger-confirm-btn {
+  border: 1px solid #742b37 !important;
+  background: rgba(116, 43, 55, 0.14) !important;
+  color: #742b37 !important;
+}
+
+:host-context(body.theme-light) .danger-confirm-btn {
+  border: 1px solid #742b37 !important;
+  background: rgba(116, 43, 55, 0.14) !important;
+  color: #742b37 !important;
+}
+

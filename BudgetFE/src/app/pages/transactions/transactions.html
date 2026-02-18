@@ -1,0 +1,140 @@
+﻿<div class="transactions-header">
+  <mat-form-field class="search-field" appearance="outline">
+    <mat-label>Wyszukaj</mat-label>
+    <input matInput [formControl]="searchControl" placeholder="Tytuł, kategoria, opis" />
+    <mat-icon matPrefix>search</mat-icon>
+    @if (searchControl.value) {
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        class="search-clear-btn"
+        (click)="clearSearch()"
+        aria-label="Wyczyść wyszukiwanie"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+  <button mat-raised-button color="primary" class="add-transaction-btn" (click)="openAddDialog()">
+    <mat-icon>add</mat-icon>
+    Dodaj transakcję
+  </button>
+</div>
+
+@if (isMobile$ | async) {
+  <div class="cards-container">
+    @for (t of transactions(); track t.id) {
+      <mat-card class="transaction-card">
+        <mat-card-header>
+          <mat-card-title>{{ t.title }}</mat-card-title>
+          <mat-card-subtitle>{{ t.date | date: 'dd.MM.yyyy' }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="card-row">
+            <span class="card-label">Kategoria:</span>
+            <span>{{ t.category }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Typ:</span>
+            <span [ngClass]="getTypeClass(t.type)">{{ getTypeLabel(t.type) }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Kwota:</span>
+            <span [ngClass]="getTypeClass(t.type)" class="card-amount">
+              {{ t.amount | currency: 'PLN' : 'symbol' : '1.2-2' : 'pl' }}
+            </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-icon-button class="action-btn edit-btn" (click)="openEditDialog(t)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" class="action-btn delete-btn" (click)="openDeleteDialog(t)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    } @empty {
+      <p class="no-data">Brak transakcji do wyświetlenia</p>
+    }
+  </div>
+} @else {
+  <div class="table-panel">
+    <div class="table-container" [class.empty]="!transactions().length && !loading()">
+      <table mat-table [dataSource]="transactions()" matSort (matSortChange)="onSortChange($event)">
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+          <td mat-cell *matCellDef="let t">{{ t.date | date: 'dd.MM.yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tytuł</th>
+          <td mat-cell *matCellDef="let t">{{ t.title }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Kategoria</th>
+          <td mat-cell *matCellDef="let t">{{ t.category }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Typ</th>
+          <td mat-cell *matCellDef="let t">
+            <span [ngClass]="getTypeClass(t.type)">{{ getTypeLabel(t.type) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Kwota</th>
+          <td mat-cell *matCellDef="let t">
+            <span [ngClass]="getTypeClass(t.type)">
+              {{ t.amount | currency: 'PLN' : 'symbol' : '1.2-2' : 'pl' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Akcje</th>
+          <td mat-cell *matCellDef="let t">
+            <button mat-icon-button class="action-btn edit-btn" (click)="openEditDialog(t)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" class="action-btn delete-btn" (click)="openDeleteDialog(t)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      @if (!transactions().length && !loading()) {
+        <p class="no-data">Brak transakcji do wyświetlenia</p>
+      }
+    </div>
+
+    <mat-paginator
+      class="transactions-paginator"
+      [length]="totalCount()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    />
+  </div>
+}
+
+<mat-paginator
+  class="mobile-paginator"
+  [length]="totalCount()"
+  [pageSize]="pageSize()"
+  [pageIndex]="pageIndex()"
+  [pageSizeOptions]="[5, 10, 25, 50]"
+  (page)="onPageChange($event)"
+  showFirstLastButtons
+/>
+
+

@@ -1,0 +1,107 @@
+services:
+  budget-db:
+    image: postgres:16-alpine
+    container_name: budget-db-preprod
+    environment:
+      POSTGRES_DB: budgetdb
+      POSTGRES_USER: budget_user
+      POSTGRES_PASSWORD: budget_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - budget-db-data:/var/lib/postgresql/data
+    networks:
+      - budget-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U budget_user -d budgetdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  keycloak-db:
+    image: postgres:16-alpine
+    container_name: keycloak-db-preprod
+    environment:
+      POSTGRES_DB: keycloakdb
+      POSTGRES_USER: keycloak_user
+      POSTGRES_PASSWORD: keycloak_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    networks:
+      - budget-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak_user -d keycloakdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: keycloak-preprod
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloakdb
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak_pass
+      KC_SPI_THEME_STATIC_MAX_AGE: -1
+      KC_SPI_THEME_CACHE_THEMES: "false"
+      KC_SPI_THEME_CACHE_TEMPLATES: "false"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./infra/keycloak/import:/opt/keycloak/data/import
+      - ./infra/keycloak/themes:/opt/keycloak/themes
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    networks:
+      - budget-network
+
+  budget-api:
+    container_name: budget-api-preprod
+    build:
+      context: ./BudgetBE/BudgetApi
+      dockerfile: src/Budget.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__BudgetDatabase: Host=budget-db;Port=5432;Database=budgetdb;Username=budget_user;Password=budget_pass
+      Keycloak__Authority: http://keycloak:8080/realms/budget
+      Keycloak__PublicAuthority: http://localhost:8080/realms/budget
+      Keycloak__Audience: budget-api
+      Cors__AllowedOrigins__0: http://localhost:4200
+    ports:
+      - "5000:8080"
+    depends_on:
+      budget-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    networks:
+      - budget-network
+
+  budget-fe:
+    container_name: budget-fe-preprod
+    build:
+      context: ./BudgetFE
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      budget-api:
+        condition: service_started
+    networks:
+      - budget-network
+
+volumes:
+  budget-db-data:
+  keycloak-db-data:
+
+networks:
+  budget-network:
+    driver: bridge

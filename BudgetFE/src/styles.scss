@@ -1,0 +1,142 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      theme-type: dark,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+:root {
+  --bg-color: #0f1723;
+  --bg-gradient: radial-gradient(circle at 20% -20%, #27405f 0%, transparent 45%),
+    radial-gradient(circle at 90% 0%, #1f3d5b 0%, transparent 35%),
+    #0f1723;
+  --surface-1: #192637;
+  --surface-2: #223245;
+  --border-color: rgba(181, 205, 231, 0.22);
+  --text-primary: #e7eef8;
+  --text-secondary: rgba(231, 238, 248, 0.72);
+}
+
+body.theme-light {
+  --bg-color: #edf3fa;
+  --bg-gradient: radial-gradient(circle at 18% -18%, #d3e5f9 0%, transparent 42%),
+    radial-gradient(circle at 88% 2%, #e1eefb 0%, transparent 32%),
+    #edf3fa;
+  --surface-1: #f6f9fd;
+  --surface-2: #ebf2fa;
+  --border-color: rgba(84, 117, 154, 0.24);
+  --text-primary: #1d334a;
+  --text-secondary: rgba(29, 51, 74, 0.7);
+}
+
+body.theme-light .cdk-overlay-container .mat-mdc-dialog-surface {
+  background: #f6f9fd !important;
+  color: #1d334a !important;
+  border: 1px solid rgba(84, 117, 154, 0.24);
+}
+
+body.theme-light .cdk-overlay-container .mat-mdc-dialog-title,
+body.theme-light .cdk-overlay-container .mat-mdc-dialog-content,
+body.theme-light .cdk-overlay-container .mat-mdc-dialog-actions {
+  color: #1d334a !important;
+}
+
+body.theme-light .cdk-overlay-container .mat-mdc-select-panel {
+  background: #f6f9fd !important;
+  border: 1px solid rgba(84, 117, 154, 0.24);
+}
+
+body.theme-light .cdk-overlay-container .mat-mdc-option .mdc-list-item__primary-text {
+  color: #1d334a !important;
+}
+
+body.theme-light .cdk-overlay-container .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+body.theme-light .cdk-overlay-container .mat-mdc-option.mdc-list-item--selected {
+  background: rgba(88, 133, 180, 0.14) !important;
+}
+
+body.theme-light .cdk-overlay-container .mat-datepicker-content,
+body.theme-light .cdk-overlay-container .mat-datepicker-content .mat-calendar {
+  background: #f6f9fd !important;
+  color: #1d334a !important;
+}
+
+.cdk-overlay-pane .dashboard-datepicker-panel {
+  width: 320px !important;
+  min-width: 320px !important;
+}
+
+@media (max-width: 768px) {
+  .cdk-overlay-pane .dashboard-datepicker-panel {
+    width: calc(100vw - 32px) !important;
+    min-width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+}
+
+body.theme-light .mat-mdc-paginator .mat-mdc-select-arrow,
+body.theme-light .mat-mdc-paginator .mat-mdc-select-arrow svg {
+  color: #000 !important;
+  fill: #000 !important;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--bg-gradient);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+.mat-mdc-card,
+.mat-drawer,
+.mat-mdc-dialog-surface,
+.mat-mdc-paginator,
+.mat-mdc-table {
+  background-color: var(--surface-1) !important;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell,
+.mat-mdc-paginator-container,
+.mat-mdc-dialog-title,
+.mat-mdc-dialog-content,
+.mat-mdc-card-subtitle,
+.mat-drawer,
+.mat-drawer-container,
+.mat-toolbar {
+  color: var(--text-primary) !important;
+}
+
+.mat-drawer-container {
+  background: transparent !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper,
+.mat-mdc-form-field-hint-wrapper,
+.mat-mdc-select-value-text,
+.mat-mdc-option .mdc-list-item__primary-text {
+  color: var(--text-secondary) !important;
+}

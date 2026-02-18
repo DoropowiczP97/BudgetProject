@@ -1,0 +1,128 @@
+﻿@if (loading()) {
+  <div class="loading-container">
+    <mat-spinner diameter="48" />
+  </div>
+} @else {
+  <div class="dashboard-content">
+    <div class="date-filter">
+      <form [formGroup]="dateRange" class="date-range-form">
+        <mat-form-field class="filter-field" appearance="outline">
+          <mat-label>Od</mat-label>
+          <input matInput [matDatepicker]="startPicker" formControlName="start" />
+          @if (dateRange.controls.start.value) {
+            <button
+              matSuffix
+              type="button"
+              class="clear-filter-btn"
+              (click)="clearStartDate($event)"
+              aria-label="Wyczyść filtr daty od"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          <mat-datepicker-toggle matIconSuffix [for]="startPicker" class="calendar-toggle-btn" />
+          <mat-datepicker #startPicker panelClass="dashboard-datepicker-panel" />
+        </mat-form-field>
+
+        <mat-form-field class="filter-field" appearance="outline">
+          <mat-label>Do</mat-label>
+          <input matInput [matDatepicker]="endPicker" formControlName="end" />
+          @if (dateRange.controls.end.value) {
+            <button
+              matSuffix
+              type="button"
+              class="clear-filter-btn"
+              (click)="clearEndDate($event)"
+              aria-label="Wyczyść filtr daty do"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          <mat-datepicker-toggle matIconSuffix [for]="endPicker" class="calendar-toggle-btn" />
+          <mat-datepicker #endPicker panelClass="dashboard-datepicker-panel" />
+        </mat-form-field>
+      </form>
+    </div>
+
+    @if (summary(); as s) {
+      <div class="summary-cards">
+        <mat-card class="summary-card income-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="card-icon income-icon">trending_up</mat-icon>
+            <mat-card-title>Przychody</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <span class="amount income-amount">{{ s.totalIncome | currency: 'PLN' : 'symbol' : '1.2-2' : 'pl' }}</span>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-card expense-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="card-icon expense-icon">trending_down</mat-icon>
+            <mat-card-title>Wydatki</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <span class="amount expense-amount">{{ s.totalExpenses | currency: 'PLN' : 'symbol' : '1.2-2' : 'pl' }}</span>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-card balance-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="card-icon balance-icon">account_balance</mat-icon>
+            <mat-card-title>Bilans</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <span class="amount balance-amount">{{ s.balance | currency: 'PLN' : 'symbol' : '1.2-2' : 'pl' }}</span>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="charts-container">
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Przychody vs Wydatki (miesięcznie)</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="chart-content">
+            @if (barChartData().length) {
+              <ngx-charts-bar-vertical-2d
+                [results]="barChartData()"
+                [xAxis]="true"
+                [yAxis]="true"
+                [showXAxisLabel]="true"
+                [showYAxisLabel]="true"
+                xAxisLabel="Miesiąc"
+                yAxisLabel="Kwota (PLN)"
+                [scheme]="barChartColorScheme"
+                [legend]="false"
+                [barPadding]="4"
+                [groupPadding]="16"
+              />
+            } @else {
+              <p class="no-data">Brak danych do wyświetlenia</p>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Wydatki wg kategorii</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="chart-content">
+            @if (pieChartData().length) {
+              <ngx-charts-pie-chart
+                [results]="pieChartData()"
+                [scheme]="pieChartColorScheme"
+                [customColors]="pieChartCustomColors()"
+                [legend]="false"
+                [doughnut]="true"
+                [labels]="true"
+              />
+            } @else {
+              <p class="no-data">Brak danych do wyświetlenia</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+  </div>
+}
