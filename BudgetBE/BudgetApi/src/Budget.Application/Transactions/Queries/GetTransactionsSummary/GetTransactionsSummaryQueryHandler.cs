@@ -49,6 +49,10 @@ public sealed class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTran
             .Where(transaction => transaction.Type == TransactionType.Expense)
             .Sum(transaction => transaction.Amount);
 
+        var totalInvestments = transactions
+            .Where(transaction => transaction.Type == TransactionType.Investment)
+            .Sum(transaction => transaction.Amount);
+
         var byCategory = transactions
             .GroupBy(transaction => new { transaction.Category, transaction.Type })
             .Select(group => new CategorySummaryDto
@@ -67,7 +71,8 @@ public sealed class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTran
             {
                 Month = group.Key,
                 Income = group.Where(item => item.Type == TransactionType.Income).Sum(item => item.Amount),
-                Expenses = group.Where(item => item.Type == TransactionType.Expense).Sum(item => item.Amount)
+                Expenses = group.Where(item => item.Type == TransactionType.Expense).Sum(item => item.Amount),
+                Investments = group.Where(item => item.Type == TransactionType.Investment).Sum(item => item.Amount)
             })
             .OrderBy(item => item.Month)
             .ToList();
@@ -76,6 +81,7 @@ public sealed class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTran
         {
             TotalIncome = totalIncome,
             TotalExpenses = totalExpenses,
+            TotalInvestments = totalInvestments,
             Balance = totalIncome - totalExpenses,
             ByCategory = byCategory,
             ByMonth = byMonth

@@ -162,10 +162,14 @@ export class TransactionsComponent implements OnInit {
   }
 
   getTypeLabel(type: TransactionType): string {
-    return type === TransactionType.Income ? 'Przychód' : 'Wydatek';
+    if (type === TransactionType.Income) return 'Przychód';
+    if (type === TransactionType.Investment) return 'Inwestycja';
+    return 'Wydatek';
   }
 
   getTypeClass(type: TransactionType): string {
-    return type === TransactionType.Income ? 'type-income' : 'type-expense';
+    if (type === TransactionType.Income) return 'type-income';
+    if (type === TransactionType.Investment) return 'type-investment';
+    return 'type-expense';
   }
 }

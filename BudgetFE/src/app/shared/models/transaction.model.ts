@@ -1,6 +1,7 @@
 export enum TransactionType {
   Income = 0,
   Expense = 1,
+  Investment = 2,
 }
 
 export interface Transaction {
@@ -27,7 +28,15 @@ export const EXPENSE_CATEGORIES = [
 export const INCOME_CATEGORIES = [
   'Wynagrodzenie',
   'Freelance',
-  'Inwestycje',
   'Prezenty',
   'Inne przychody',
+] as const;
+
+export const INVESTMENT_CATEGORIES = [
+  'Akcje',
+  'Kryptowaluty',
+  'Fundusze ETF',
+  'Obligacje',
+  'Nieruchomości',
+  'Inne inwestycje',
 ] as const;

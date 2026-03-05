@@ -12,6 +12,7 @@ import {
   TransactionType,
   EXPENSE_CATEGORIES,
   INCOME_CATEGORIES,
+  INVESTMENT_CATEGORIES,
 } from '../../../shared/models/transaction.model';
 import { createTransactionForm } from '../../../forms/form-factory';
 import { TransactionFormModel } from '../../../forms/transaction-form.model';
@@ -47,6 +48,7 @@ export class TransactionDialogComponent implements OnInit {
   transactionTypes = [
     { value: TransactionType.Income, label: 'Przychód' },
     { value: TransactionType.Expense, label: 'Wydatek' },
+    { value: TransactionType.Investment, label: 'Inwestycja' },
   ];
 
   ngOnInit(): void {
@@ -89,6 +91,8 @@ export class TransactionDialogComponent implements OnInit {
   }
 
   private updateCategories(type: TransactionType): void {
-    this.categories = type === TransactionType.Income ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    if (type === TransactionType.Income) this.categories = INCOME_CATEGORIES;
+    else if (type === TransactionType.Investment) this.categories = INVESTMENT_CATEGORIES;
+    else this.categories = EXPENSE_CATEGORIES;
   }
 }

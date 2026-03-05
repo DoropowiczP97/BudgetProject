@@ -2,6 +2,7 @@ export interface MonthlySummary {
   month: string;
   income: number;
   expenses: number;
+  investments: number;
 }
 
 export interface CategorySummary {
@@ -13,6 +14,7 @@ export interface CategorySummary {
 export interface TransactionsSummary {
   totalIncome: number;
   totalExpenses: number;
+  totalInvestments: number;
   balance: number;
   byMonth: MonthlySummary[];
   byCategory: CategorySummary[];

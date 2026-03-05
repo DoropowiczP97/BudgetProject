@@ -31,13 +31,21 @@ export interface UpdateTransactionRequest extends CreateTransactionRequest {
   id: string;
 }
 
+interface BackendMonthlySummary {
+  month: string;
+  income: number;
+  expenses: number;
+  investments?: number;
+}
+
 interface BackendTransactionsSummary {
   totalIncome?: number;
   totalExpense?: number;
   totalExpenses?: number;
+  totalInvestments?: number;
   balance?: number;
-  monthlySummaries?: Array<{ month: string; income: number; expenses: number }>;
-  byMonth?: Array<{ month: string; income: number; expenses: number }>;
+  monthlySummaries?: BackendMonthlySummary[];
+  byMonth?: BackendMonthlySummary[];
   expensesByCategory?: Array<{ category: string; total: number; totalAmount?: number; type?: number }>;
   byCategory?: Array<{ category: string; totalAmount: number; type: number }>;
 }
@@ -72,8 +80,14 @@ export class TransactionService {
       map((summary) => ({
         totalIncome: summary.totalIncome ?? 0,
         totalExpenses: summary.totalExpenses ?? summary.totalExpense ?? 0,
+        totalInvestments: summary.totalInvestments ?? 0,
         balance: summary.balance ?? 0,
-        byMonth: summary.byMonth ?? summary.monthlySummaries ?? [],
+        byMonth: (summary.byMonth ?? summary.monthlySummaries ?? []).map((m) => ({
+          month: m.month,
+          income: m.income,
+          expenses: m.expenses,
+          investments: m.investments ?? 0,
+        })),
         byCategory: summary.byCategory ?? (summary.expensesByCategory ?? []).map((item) => ({
           category: item.category,
           totalAmount: item.totalAmount ?? item.total ?? 0,

@@ -124,7 +124,7 @@
 
 .summary-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -182,12 +182,54 @@
   color: #ff8880;
 }
 
+.investment-icon {
+  background-color: #5c6bc0;
+}
+
+.investment-amount {
+  color: #9fa8da;
+}
+
 .balance-icon {
   background-color: #1976d2;
 }
 
 .balance-amount {
   color: #8cc2ff;
+}
+
+.pie-tabs {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.pie-tab {
+  padding: 4px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.active {
+    background: rgba(92, 107, 192, 0.2);
+    border-color: #5c6bc0;
+    color: #9fa8da;
+  }
+
+  &:not(.active):hover {
+    background: rgba(140, 194, 255, 0.08);
+    color: var(--text-primary);
+  }
+}
+
+:host-context(body.theme-light) .pie-tab.active {
+  background: rgba(63, 81, 181, 0.12);
+  border-color: #3f51b5;
+  color: #3f51b5;
 }
 
 .charts-container {
@@ -258,6 +300,10 @@
 
 // Tablet
 @media (max-width: 1024px) {
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .charts-container {
     grid-template-columns: 1fr;
     min-height: 0;

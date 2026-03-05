@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, computed } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, computed, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ import { CurrencyPipe } from '@angular/common';
 import { BarChartModule, PieChartModule, Color, ScaleType } from '@swimlane/ngx-charts';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { DashboardStore } from '../../shared/stores/dashboard.store';
+import { TransactionType } from '../../shared/models/transaction.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,6 +39,8 @@ export class DashboardComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   readonly store = inject(DashboardStore);
 
+  pieActiveType = signal<'expense' | 'investment'>('expense');
+
   dateRange = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
@@ -51,6 +54,7 @@ export class DashboardComponent implements OnInit {
       series: [
         { name: 'Przychody', value: m.income },
         { name: 'Wydatki', value: m.expenses },
+        { name: 'Inwestycje', value: m.investments },
       ],
     }));
   });
@@ -58,44 +62,47 @@ export class DashboardComponent implements OnInit {
   pieChartData = computed(() => {
     const s = this.store.summary();
     if (!s) return [];
-    return (s.byCategory ?? []).map((c) => ({
-      name: c.category,
-      value: c.totalAmount,
-    }));
+    const activeType = this.pieActiveType() === 'expense' ? TransactionType.Expense : TransactionType.Investment;
+    return (s.byCategory ?? [])
+      .filter((c) => c.type === activeType)
+      .map((c) => ({ name: c.category, value: c.totalAmount }));
   });
 
   pieChartCustomColors = computed(() =>
     this.pieChartData().map((item) => ({
       name: item.name,
-      value: this.categoryColorMap[item.name] ?? '#b9474d',
+      value: this.categoryColorMap[item.name] ?? '#7986cb',
     })),
   );
 
+  pieColorScheme = computed((): Color =>
+    this.pieActiveType() === 'expense' ? this.pieExpenseColorScheme : this.pieInvestmentColorScheme,
+  );
+
   barChartColorScheme: Color = {
-    name: 'income-expense',
+    name: 'income-expense-investment',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#4caf50', '#f44336'],
+    domain: ['#4caf50', '#f44336', '#5c6bc0'],
   };
-  pieChartColorScheme: Color = {
-    name: 'categories',
+
+  private readonly pieExpenseColorScheme: Color = {
+    name: 'categories-expense',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: [
-      '#4caf50',
-      '#5fbf61',
-      '#6bca70',
-      '#7ed584',
-      '#f44336',
-      '#e13a44',
-      '#cc3342',
-      '#b9474d',
-    ],
+    domain: ['#f44336', '#e13a44', '#cc3342', '#b9474d', '#a7293b', '#962537', '#852133', '#741c2f'],
   };
+
+  private readonly pieInvestmentColorScheme: Color = {
+    name: 'categories-investment',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#3f51b5', '#5c6bc0', '#7986cb', '#9fa8da', '#283593', '#1a237e'],
+  };
+
   private readonly categoryColorMap: Record<string, string> = {
     Wynagrodzenie: '#4caf50',
     Freelance: '#5fbf61',
-    Inwestycje: '#6bca70',
     Prezenty: '#7ed584',
     'Inne przychody': '#8de29b',
     Jedzenie: '#f44336',
@@ -106,6 +113,12 @@ export class DashboardComponent implements OnInit {
     Edukacja: '#962537',
     Ubrania: '#852133',
     'Inne wydatki': '#741c2f',
+    Akcje: '#3f51b5',
+    Kryptowaluty: '#5c6bc0',
+    'Fundusze ETF': '#7986cb',
+    Obligacje: '#9fa8da',
+    Nieruchomości: '#283593',
+    'Inne inwestycje': '#1a237e',
   };
 
   ngOnInit(): void {
