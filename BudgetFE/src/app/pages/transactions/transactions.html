@@ -24,7 +24,7 @@
 
 @if (isMobile$ | async) {
   <div class="cards-container">
-    @for (t of transactions(); track t.id) {
+    @for (t of store.transactions(); track t.id) {
       <mat-card class="transaction-card">
         <mat-card-header>
           <mat-card-title>{{ t.title }}</mat-card-title>
@@ -61,8 +61,8 @@
   </div>
 } @else {
   <div class="table-panel">
-    <div class="table-container" [class.empty]="!transactions().length && !loading()">
-      <table mat-table [dataSource]="transactions()" matSort (matSortChange)="onSortChange($event)">
+    <div class="table-container" [class.empty]="!store.transactions().length && !store.loading()">
+      <table mat-table [dataSource]="store.transactions()" matSort (matSortChange)="onSortChange($event)">
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
           <td mat-cell *matCellDef="let t">{{ t.date | date: 'dd.MM.yyyy' }}</td>
@@ -110,16 +110,16 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
 
-      @if (!transactions().length && !loading()) {
+      @if (!store.transactions().length && !store.loading()) {
         <p class="no-data">Brak transakcji do wyświetlenia</p>
       }
     </div>
 
     <mat-paginator
       class="transactions-paginator"
-      [length]="totalCount()"
-      [pageSize]="pageSize()"
-      [pageIndex]="pageIndex()"
+      [length]="store.totalCount()"
+      [pageSize]="store.pageSize()"
+      [pageIndex]="store.pageIndex()"
       [pageSizeOptions]="[5, 10, 25, 50]"
       (page)="onPageChange($event)"
       showFirstLastButtons
@@ -129,9 +129,9 @@
 
 <mat-paginator
   class="mobile-paginator"
-  [length]="totalCount()"
-  [pageSize]="pageSize()"
-  [pageIndex]="pageIndex()"
+  [length]="store.totalCount()"
+  [pageSize]="store.pageSize()"
+  [pageIndex]="store.pageIndex()"
   [pageSizeOptions]="[5, 10, 25, 50]"
   (page)="onPageChange($event)"
   showFirstLastButtons

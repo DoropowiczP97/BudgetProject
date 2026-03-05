@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -12,8 +12,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { CurrencyPipe } from '@angular/common';
 import { BarChartModule, PieChartModule, Color, ScaleType } from '@swimlane/ngx-charts';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
-import { TransactionService } from '../../shared/services/transaction.service';
-import { TransactionsSummary } from '../../shared/models/transaction-summary.model';
+import { DashboardStore } from '../../shared/stores/dashboard.store';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,11 +35,8 @@ import { TransactionsSummary } from '../../shared/models/transaction-summary.mod
   styleUrl: './dashboard.scss',
 })
 export class DashboardComponent implements OnInit {
-  private readonly transactionService = inject(TransactionService);
   private readonly destroyRef = inject(DestroyRef);
-
-  summary = signal<TransactionsSummary | null>(null);
-  loading = signal(true);
+  readonly store = inject(DashboardStore);
 
   dateRange = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -48,7 +44,7 @@ export class DashboardComponent implements OnInit {
   });
 
   barChartData = computed(() => {
-    const s = this.summary();
+    const s = this.store.summary();
     if (!s) return [];
     return (s.byMonth ?? []).map((m) => ({
       name: m.month,
@@ -60,7 +56,7 @@ export class DashboardComponent implements OnInit {
   });
 
   pieChartData = computed(() => {
-    const s = this.summary();
+    const s = this.store.summary();
     if (!s) return [];
     return (s.byCategory ?? []).map((c) => ({
       name: c.category,
@@ -113,17 +109,23 @@ export class DashboardComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.loadSummary();
+    this.store.load();
 
-    this.dateRange.valueChanges.pipe(
-      map((value) => ({
-        start: this.formatDateOrNull(value.start),
-        end: this.formatDateOrNull(value.end),
-      })),
-      debounceTime(350),
-      distinctUntilChanged((prev, current) => prev.start === current.start && prev.end === current.end),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadSummary());
+    this.dateRange.valueChanges
+      .pipe(
+        map((value) => ({
+          start: this.formatDateOrNull(value.start),
+          end: this.formatDateOrNull(value.end),
+        })),
+        debounceTime(350),
+        distinctUntilChanged(
+          (prev, current) => prev.start === current.start && prev.end === current.end,
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(({ start, end }) =>
+        this.store.setDateRange(start ?? undefined, end ?? undefined),
+      );
   }
 
   clearStartDate(event: MouseEvent): void {
@@ -134,34 +136,6 @@ export class DashboardComponent implements OnInit {
   clearEndDate(event: MouseEvent): void {
     event.stopPropagation();
     this.dateRange.controls.end.setValue(null);
-  }
-
-  applyFilter(): void {
-    this.loadSummary();
-  }
-
-  clearFilter(): void {
-    this.dateRange.reset();
-    this.loadSummary();
-  }
-
-  private loadSummary(): void {
-    this.loading.set(true);
-
-    const start = this.dateRange.value.start;
-    const end = this.dateRange.value.end;
-    const dateFrom = start ? this.formatDate(start) : undefined;
-    const dateTo = end ? this.formatDate(end) : undefined;
-
-    this.transactionService.getSummary(dateFrom, dateTo).subscribe({
-      next: (data) => {
-        this.summary.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      },
-    });
   }
 
   private formatDate(date: Date): string {

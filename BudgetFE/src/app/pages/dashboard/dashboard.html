@@ -1,4 +1,4 @@
-﻿@if (loading()) {
+﻿@if (store.loading()) {
   <div class="loading-container">
     <mat-spinner diameter="48" />
   </div>
@@ -44,7 +44,7 @@
       </form>
     </div>
 
-    @if (summary(); as s) {
+    @if (store.summary(); as s) {
       <div class="summary-cards">
         <mat-card class="summary-card income-card">
           <mat-card-header>

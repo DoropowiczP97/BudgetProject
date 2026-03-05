@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -17,11 +17,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { Transaction, TransactionType } from '../../shared/models/transaction.model';
-import {
-  TransactionService,
-  CreateTransactionRequest,
-  UpdateTransactionRequest,
-} from '../../shared/services/transaction.service';
+import { CreateTransactionRequest, UpdateTransactionRequest } from '../../shared/services/transaction.service';
 import {
   TransactionDialogComponent,
   TransactionDialogData,
@@ -30,6 +26,7 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogData,
 } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { TransactionStore } from '../../shared/stores/transaction.store';
 
 @Component({
   selector: 'app-transactions',
@@ -56,24 +53,16 @@ import {
   styleUrl: './transactions.scss',
 })
 export class TransactionsComponent implements OnInit {
-  private readonly transactionService = inject(TransactionService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly destroyRef = inject(DestroyRef);
+  readonly store = inject(TransactionStore);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   displayedColumns = ['date', 'title', 'category', 'type', 'amount', 'actions'];
-  transactions = signal<Transaction[]>([]);
-  totalCount = signal(0);
-  pageSize = signal(10);
-  pageIndex = signal(0);
-  sortBy = signal('date');
-  sortDirection = signal('desc');
-  searchTerm = signal('');
-  loading = signal(true);
   searchControl = new FormControl('', { nonNullable: true });
 
   isMobile$ = this.breakpointObserver
@@ -83,13 +72,9 @@ export class TransactionsComponent implements OnInit {
   ngOnInit(): void {
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => {
-        this.searchTerm.set(value.trim());
-        this.pageIndex.set(0);
-        this.loadTransactions();
-      });
+      .subscribe((value) => this.store.setSearch(value.trim()));
 
-    this.loadTransactions();
+    this.store.load();
   }
 
   clearSearch(): void {
@@ -97,16 +82,11 @@ export class TransactionsComponent implements OnInit {
   }
 
   onPageChange(event: PageEvent): void {
-    this.pageIndex.set(event.pageIndex);
-    this.pageSize.set(event.pageSize);
-    this.loadTransactions();
+    this.store.setPage(event.pageIndex, event.pageSize);
   }
 
   onSortChange(sort: Sort): void {
-    this.sortBy.set(sort.active);
-    this.sortDirection.set(sort.direction || 'asc');
-    this.pageIndex.set(0);
-    this.loadTransactions();
+    this.store.setSort(sort.active, sort.direction || 'asc');
   }
 
   openAddDialog(): void {
@@ -117,25 +97,20 @@ export class TransactionsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const request: CreateTransactionRequest = {
-          title: result.title,
-          amount: result.amount,
-          type: result.type,
-          category: result.category,
-          date: result.date,
-          description: result.description,
-        };
-        this.transactionService.create(request).subscribe({
-          next: () => {
-            this.snackBar.open('Transakcja została dodana', 'OK', { duration: 3000 });
-            this.loadTransactions();
-          },
-          error: () => {
-            this.snackBar.open('Błąd podczas dodawania transakcji', 'OK', { duration: 3000 });
-          },
-        });
-      }
+      if (!result) return;
+      const request: CreateTransactionRequest = {
+        title: result.title,
+        amount: result.amount,
+        type: result.type,
+        category: result.category,
+        date: result.date,
+        description: result.description,
+      };
+      this.store.create(
+        request,
+        () => this.snackBar.open('Transakcja została dodana', 'OK', { duration: 3000 }),
+        () => this.snackBar.open('Błąd podczas dodawania transakcji', 'OK', { duration: 3000 }),
+      );
     });
   }
 
@@ -147,26 +122,23 @@ export class TransactionsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const request: UpdateTransactionRequest = {
-          id: result.id,
-          title: result.title,
-          amount: result.amount,
-          type: result.type,
-          category: result.category,
-          date: result.date,
-          description: result.description,
-        };
-        this.transactionService.update(result.id, request).subscribe({
-          next: () => {
-            this.snackBar.open('Transakcja została zaktualizowana', 'OK', { duration: 3000 });
-            this.loadTransactions();
-          },
-          error: () => {
-            this.snackBar.open('Błąd podczas aktualizacji transakcji', 'OK', { duration: 3000 });
-          },
-        });
-      }
+      if (!result) return;
+      const request: UpdateTransactionRequest = {
+        id: result.id,
+        title: result.title,
+        amount: result.amount,
+        type: result.type,
+        category: result.category,
+        date: result.date,
+        description: result.description,
+      };
+      this.store.update(
+        result.id,
+        request,
+        () => this.snackBar.open('Transakcja została zaktualizowana', 'OK', { duration: 3000 }),
+        () =>
+          this.snackBar.open('Błąd podczas aktualizacji transakcji', 'OK', { duration: 3000 }),
+      );
     });
   }
 
@@ -180,17 +152,12 @@ export class TransactionsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.transactionService.delete(transaction.id).subscribe({
-          next: () => {
-            this.snackBar.open('Transakcja została usunięta', 'OK', { duration: 3000 });
-            this.loadTransactions();
-          },
-          error: () => {
-            this.snackBar.open('Błąd podczas usuwania transakcji', 'OK', { duration: 3000 });
-          },
-        });
-      }
+      if (!confirmed) return;
+      this.store.delete(
+        transaction.id,
+        () => this.snackBar.open('Transakcja została usunięta', 'OK', { duration: 3000 }),
+        () => this.snackBar.open('Błąd podczas usuwania transakcji', 'OK', { duration: 3000 }),
+      );
     });
   }
 
@@ -200,27 +167,5 @@ export class TransactionsComponent implements OnInit {
 
   getTypeClass(type: TransactionType): string {
     return type === TransactionType.Income ? 'type-income' : 'type-expense';
-  }
-
-  private loadTransactions(): void {
-    this.loading.set(true);
-    this.transactionService
-      .getTransactions({
-        pageNumber: this.pageIndex() + 1,
-        pageSize: this.pageSize(),
-        sortBy: this.sortBy(),
-        sortDirection: this.sortDirection(),
-        searchTerm: this.searchTerm() || undefined,
-      })
-      .subscribe({
-        next: (result) => {
-          this.transactions.set(result.items);
-          this.totalCount.set(result.totalCount);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-        },
-      });
   }
 }
